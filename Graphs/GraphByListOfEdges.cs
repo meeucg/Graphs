@@ -44,6 +44,7 @@ public class GraphByListOfEdges : IGraph
         if (Edge.vertice1 < VerticesCount && Edge.vertice2 < VerticesCount)
         {
             Edges[Edge.vertice1].Add(Edge.vertice2);
+            Edges[Edge.vertice2].Add(Edge.vertice1);
             return true;
         }
         return false;
@@ -51,30 +52,33 @@ public class GraphByListOfEdges : IGraph
 
     public bool AddVertice(params object[] Params)
     {
-        /*Vertices.Add(VerticesCount);
-        foreach (int vertice in Params)
+        Vertices.Add(EdgesCount);
+        if (Params.All(t => (int)t <= VerticesCount))
         {
-            if (vertice > VerticesCount)
-            { 
-                
-            }
-        }*/
-        throw new NotImplementedException ();
+            Edges.Add(Params.Select(t => (int)t).ToList());
+            return true;
+        }
+        else
+        {
+            Vertices.RemoveAt(VerticesCount-1);
+        }
+        return false;
     }
 
     public IEnumerable<int> GetAllConnectedVertices(int vertice)
     {
-        throw new NotImplementedException();
+        return Edges[Vertices[vertice]];
     }
 
     public IEnumerable<(int, int)> GetAllIncidentEdges(int vertice)
     {
-        throw new NotImplementedException();
+        return Edges[Vertices[vertice]].Select(t=>(vertice, t));
     }
 
     public bool RemoveEdge((int vertice1, int vertice2) Edge)
     {
-        throw new NotImplementedException();
+        return Edges[Vertices[Edge.vertice1]].Remove(Edge.vertice2) 
+            && Edges[Vertices[Edge.vertice2]].Remove(Edge.vertice1);
     }
 
     public bool RemoveVertice(int vertice)
